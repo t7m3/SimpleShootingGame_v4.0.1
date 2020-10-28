@@ -3,8 +3,9 @@ package com.example.simpleshootinggame_v401
 import android.view.View
 import android.widget.ImageView
 
-class Bullet(val imageView: ImageView, val xs:Float, val ys:Float, val screenwidth: Int, val screenheight:Int) {
+class Bullet(val image: ImageView, val xs:Float, val ys:Float, val screenwidth: Int, val screenheight:Int) {
 
+    public var imageView = image
     public var state = "stop"  // 弾の状態を保存する。
                                //"move"：弾は動いている。  "stop"：弾は動いていない。
     init {

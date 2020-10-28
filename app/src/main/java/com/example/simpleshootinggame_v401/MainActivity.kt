@@ -14,7 +14,10 @@ class MainActivity : AppCompatActivity() {
     private var screenWidth = 0  //スクリーンの幅を格納する変数の宣言
     private var screenHeight = 0   //スクリーンの高さ格納する変数の宣言
     private lateinit var enemy :Enemy  //Enemyクラスの変数を宣言しておく
-    private lateinit var bullet :Bullet  //Bulletクラスの変数を宣言しておく
+    val bmax = 20 // 同時発射できる弾の数
+    var bulletArray = arrayOfNulls<Bullet?>(bmax)  // Bulletクラスの配列を宣言しておく
+    var bi = 0  // これから発射する 弾 bulletArray[]　の添え字
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,13 +38,17 @@ class MainActivity : AppCompatActivity() {
         imageViewPlayer.x = 50F
         imageViewPlayer.y = screenHeight.toFloat() * 0.6F
 
-        // Bulletクラスのインスタンスを生成する（まずImageViewのインスタンスを生成し、それを元にして）
-        var imageView = ImageView(this)  //　ImageViewのインスタンスを生成する
-        imageView.setImageResource(R.drawable.arw02up)  //弾の画像を設定する
-        x = 50F
-        y = screenHeight.toFloat() * 0.7F
-        bullet = Bullet(imageView, x, y, screenWidth, screenHeight)  // ここで実際にBulletクラスのインスタンスを生成している
-        layout.addView(bullet.imageView)  // 弾を画面（layout）に追加する
+        // Bulletクラス　インスタンスの配列を作る
+        var imageView : ImageView
+        for (i in bulletArray.indices){
+            imageView = ImageView(this)  // ImageViewのインスタンスを生成
+            imageView.setImageResource(R.drawable.arw02up)  //画像を設定する
+            x = i * 25F
+            y = screenHeight.toFloat() * 0.75F
+            bulletArray[i] = Bullet(imageView, x, y, screenWidth, screenHeight)  // Bulletクラスのインスタンス生成
+            layout.addView(bulletArray[i]?.imageView)  // 画面（layout）に追加する
+            bulletArray[i]?.imageView?.visibility = View.VISIBLE  // 弾を可視にする
+        }
 
         // タイマのインスタンスの生成
         val timer = MyCountDownTimer(150 * 60 * 1000, 10)
@@ -64,30 +71,35 @@ class MainActivity : AppCompatActivity() {
             val second = millisUntilFinished / 1000 % 60
             timerText.text = "%1d:%2$02d".format(minute, second)
 
-            if (enemy.state == "move") {  // 敵が動いているときは
-                enemy.move(3);  // 敵が左右に移動する
-            }
+                if (enemy.state == "move") {  // 敵が動いているときは
+                    enemy.move(3);  // 敵が左右に移動する
+                }
 
-            if (bullet.state == "move") {  // 弾が動いているときは
+            for (i in bulletArray.indices) {
 
-                bullet.move(5)  // 弾が上に移動する
+                if (bulletArray[i]?.state == "move") {  // 弾が動いているときは
 
-                if (hit(enemy.imageView, bullet.imageView) == true) { // 弾が敵に当たったか？
+                    bulletArray[i]?.move(5)  // 弾が上に移動する
 
-                    enemy.state = "stop"  // 敵の移動を止める
+                    if (hit(enemy.imageView, bulletArray[i]!!.imageView) == true) { // 弾が敵に当たったか？
 
-                    enemy.imageView.setImageResource(R.drawable.s5z8k0g6)  //画像を爆発の画像に変える
+                        enemy.state = "stop"  // 敵の移動を止める
 
-                    // 敵を不可視にし、爆発gifアニメーション画像をその場所に表示する
-                    //enemy.imageView.visibility = View.INVISIBLE
-                    //imageViewGif.x = enemy.imageView.x
-                    //imageViewGif.y = enemy.imageView.y
-                    //imageViewGif.visibility = View.VISIBLE
+                        enemy.imageView.setImageResource(R.drawable.s5z8k0g6)  //画像を爆発の画像に変える
 
-                    explosion_millisUntilFinished = millisUntilFinished// 爆発したときの時刻（のようなもの）を保存しておく
+                        // 敵を不可視にし、爆発gifアニメーション画像をその場所に表示する
+                        //enemy.imageView.visibility = View.INVISIBLE
+                        //imageViewGif.x = enemy.imageView.x
+                        //imageViewGif.y = enemy.imageView.y
+                        //imageViewGif.visibility = View.VISIBLE
 
-                    //弾を初期位置に戻す
-                    bullet.imageView.y = -100F  // y座標を表示範囲外にすると、Bulletクラスのmoveメソッドで、初期位置に戻される
+                        explosion_millisUntilFinished =
+                            millisUntilFinished// 爆発したときの時刻（のようなもの）を保存しておく
+
+                        //弾を初期位置に戻す
+                        bulletArray[i]?.imageView!!.y =
+                            -100F  // y座標を表示範囲外にすると、Bulletクラスのmoveメソッドで、初期位置に戻される
+                    }
                 }
             }
 
@@ -105,13 +117,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-
 //オートプレイ
-            if ( millisUntilFinished / 1000 % 5 == 0L && bullet.state == "stop"){  //一定時間ごとに
-                bullet.imageView.visibility = View.VISIBLE
-                bullet.state = "move" //クラスBulletの実験  //弾を発射する
-                bullet.imageView.x =imageViewPlayer.x + imageViewPlayer.width/2 -bullet.imageView.width/2
-                bullet.imageView.y = imageViewPlayer.y
+/*            if ( millisUntilFinished / 1000 % 5 == 0L && bulletArray[0]?.state == "stop"){  //一定時間ごとに
+                bulletArray[0]?.imageView!!.visibility = View.VISIBLE
+                bulletArray[0]?.state = "move" //クラスBulletの実験  //弾を発射する
+                bulletArray[0]?.imageView!!.x =imageViewPlayer.x + imageViewPlayer.width/2 -bulletArray[0]?.imageView!!.width/2
+                bulletArray[0]?.imageView!!.y = imageViewPlayer.y
             }
             imageViewPlayer.x = imageViewPlayer.x + auto
             if (500 < imageViewPlayer.x){
@@ -120,7 +131,7 @@ class MainActivity : AppCompatActivity() {
             else if (imageViewPlayer.x < 100){
                 auto = 3F
             }
-
+*/
         }
 
         override fun onFinish() {
@@ -154,10 +165,13 @@ class MainActivity : AppCompatActivity() {
 
             MotionEvent.ACTION_UP -> {
                 textViewTouch.append("　ACTION_UP")
-                bullet.state = "move"
-                bullet.imageView.x = imageViewPlayer.x + imageViewPlayer.width/2 - bullet.imageView.width/2
-                bullet.imageView.y = imageViewPlayer.y
-                bullet.imageView.visibility = View.VISIBLE  // 弾を可視にする
+
+                bulletArray[bi]?.state = "move"
+                bulletArray[bi]?.imageView?.x = imageViewPlayer.x + imageViewPlayer.width/2 - bulletArray[bi]?.imageView!!.width/2
+                bulletArray[bi]?.imageView?.y = imageViewPlayer.y
+                bulletArray[bi]?.imageView?.visibility = View.VISIBLE  // 弾を可視にする
+
+                bi = ++bi % bmax
             }
 
             MotionEvent.ACTION_MOVE -> {
