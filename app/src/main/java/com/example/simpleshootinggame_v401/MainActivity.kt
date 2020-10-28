@@ -107,11 +107,11 @@ class MainActivity : AppCompatActivity() {
 
 
 //オートプレイ
-/*            if ( millisUntilFinished / 1000 % 5 == 0L && bullet01.state == "stop"){  //一定時間ごとに
-                bullet01.imageView.visibility = View.VISIBLE
-                bullet01.state = "move" //クラスBulletの実験  //弾を発射する
-                bullet01.imageView.x =imageViewPlayer.x + imageViewPlayer.width/2 -bullet01.imageView.width/2
-                bullet01.imageView.y = imageViewPlayer.y
+            if ( millisUntilFinished / 1000 % 5 == 0L && bullet.state == "stop"){  //一定時間ごとに
+                bullet.imageView.visibility = View.VISIBLE
+                bullet.state = "move" //クラスBulletの実験  //弾を発射する
+                bullet.imageView.x =imageViewPlayer.x + imageViewPlayer.width/2 -bullet.imageView.width/2
+                bullet.imageView.y = imageViewPlayer.y
             }
             imageViewPlayer.x = imageViewPlayer.x + auto
             if (500 < imageViewPlayer.x){
@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
             else if (imageViewPlayer.x < 100){
                 auto = 3F
             }
-*/
+
         }
 
         override fun onFinish() {
