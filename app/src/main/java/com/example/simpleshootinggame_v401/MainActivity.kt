@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         y = screenHeight.toFloat() * 0.7F
         bullet = Bullet(imageView, x, y, screenWidth, screenHeight)  // ここで実際にBulletクラスのインスタンスを生成している
         layout.addView(bullet.imageView)  // 弾を画面（layout）に追加する
+        bullet.imageView.visibility = View.INVISIBLE  // 弾を不可視にする
 
         // タイマのインスタンスの生成
         val timer = MyCountDownTimer(150 * 60 * 1000, 10)

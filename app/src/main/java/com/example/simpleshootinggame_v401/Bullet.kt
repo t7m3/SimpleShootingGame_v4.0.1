@@ -21,7 +21,7 @@ class Bullet(val imageView: ImageView, val xs:Float, val ys:Float, val screenwid
             state = "stop"
             imageView.x = xs // 位置を初期位置にする
             imageView.y = ys // 位置を初期位置にする
-            //imageView.visibility = View.INVISIBLE  // 弾を不可視にする
+            imageView.visibility = View.INVISIBLE  // 弾を不可視にする
         }
 
     }
